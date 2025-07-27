@@ -17,19 +17,7 @@ import {
 /* Highlight renderer — unchanged */
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
-  const {
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    startAngle,
-    endAngle,
-    fill,
-    payload,
-    percent,
-    value
-  } = props;
+  const {cx,cy,midAngle,innerRadius,outerRadius,startAngle,endAngle,fill,payload,percent,value} = props;
 
   const borderColor = payload.borderColor || "#000"; // fallback if not provided
 

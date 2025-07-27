@@ -1,6 +1,7 @@
 import Chart from './allCharts/Chart'
 import StatusPieChart from './allCharts/StatusPieChart'
 import './App.css'
+import PieChart from './PieChart';
 
 function App() {
   const rawData = [
@@ -13,32 +14,23 @@ function App() {
     { id: 14, status: 'COMPLETED' },
     { id: 15, status: 'a' },
     { id: 15, status: 'b' },
-    { id: 15, status: 'c' },
-    { id: 15, status: 'd' },
-    { id: 15, status: 'e' },
-    { id: 15, status: 'f' },
-    { id: 15, status: 'g' },
-    { id: 15, status: 'h' },
-    { id: 15, status: 'i' },
-    { id: 15, status: 'j' },
-    { id: 15, status: 'k' },
-    { id: 15, status: 'l' },
-    { id: 15, status: 'm' },
-    { id: 15, status: 'n' },
-    { id: 15, status: 'o' },
-    { id: 15, status: 'p' },
-    { id: 15, status: 'q' },
-    { id: 15, status: 'r' },
-    { id: 15, status: 's' }
 
   ];
+    const chartData = [
+    { label: "a", value: 25, color: "#36a2eb" },
+    { label: "b", value: 75, color: "#cc65fe" },
+    // { label: "c", value: 40, color: "#ff6384" },
+    // { label: "D", value: 10, color: "#ffce56" },
+    // { label: "e", value: 20, color: "#ffce56" },
+  ];
   return (
-    <>
-      <h1>h</h1>
-      <Chart data={rawData}/>
+    <div style={{backgroundColor:'gray'}}>
+      {/* <Chart data={rawData}/> */}
       <StatusPieChart rawData={rawData}/>
+      <hr />
+        <PieChart data={chartData} radius={100} />
 
-    </>
+    </div>
   )
 }
 

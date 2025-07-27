@@ -29,19 +29,12 @@ const getArcPath = (
     };
 
     const largeArcFlag = endAngle - startAngle > Math.PI ? 1 : 0;
-
-    // console.log("  ↪ Arc Start:", start);
-    // console.log("  ↪ Arc End:", end);
-    // console.log("  ↪ Large Arc Flag:", largeArcFlag);
-
     const path = [
         `M ${cx} ${cy}`,
         `L ${start.x} ${start.y}`,
         `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`,
         "Z",
     ].join(" ");
-
-    // console.log("  ↪ SVG Path:", path);
     return path;
 };
 
@@ -51,9 +44,6 @@ const PieChart: React.FC<Props> = ({ data, radius = 100 }) => {
     let startAngle = 0;
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
-
-    // console.log("🔵 Rendering Pie Chart");
-    // console.log("👉 Center:", { cx, cy });
 
     return (
         <div style={{ textAlign: "center", padding: '5px' }}>
@@ -84,9 +74,6 @@ const PieChart: React.FC<Props> = ({ data, radius = 100 }) => {
                                 setHoveredIndex(null)
                                 setTooltipPos(null);
                             }}
-                        // onMouseMove={(e) => {
-                        //     setTooltipPos({ x: e.clientX, y: e.clientY });
-                        // }}
                         />
                     );
 

@@ -146,31 +146,23 @@ const PieChart: React.FC<Props> = ({ data, radius = 100, innerRadius = 0 }) => {
                     const linePoint = polarToCartesian(cx, cy, r2, midAngle);
 
                     const textOffsetX = midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -40 : 10;
+                    const labelAnchorPoint = {
+                        x: linePoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -30 : 30),
+                        y: linePoint.y,
+                    };
+
 
                     return (
                         <>
+                            {/* Outer highlight arc */}
                             <path
-                                d={getArcSegmentPath(
-                                    cx,
-                                    cy,
-                                    radius + 8,  // outer highlight radius
-                                    sliceStartAngle,
-                                    // midAngle - 0.1,  // 0.1 rad ≈ 6°
-                                    // midAngle + 0.1
-                                    sliceEndAngle
-                                )}
+                                d={getArcSegmentPath(cx, cy, radius + 8, sliceStartAngle, sliceEndAngle)}
                                 fill="none"
                                 stroke={hovered.color}
                                 strokeWidth="2"
                             />
 
-                            {/* <path
-                                // key={}
-                                d={}
-                                fill={}
-                                
-                            /> */}
-                            {/* Line pointing out */}
+                            {/* Pointer line from arc edge to label line start */}
                             <line
                                 x1={arcPoint.x}
                                 y1={arcPoint.y}
@@ -179,22 +171,33 @@ const PieChart: React.FC<Props> = ({ data, radius = 100, innerRadius = 0 }) => {
                                 stroke={hovered.color}
                                 strokeWidth="1.5"
                             />
-                            
 
-                            {/* Optional arc marker */}
-                            <circle cx={linePoint.x} cy={linePoint.y} r={2} fill={hovered.color} />
+                            {/* Horizontal label line */}
+                            <line
+                                x1={linePoint.x}
+                                y1={linePoint.y}
+                                x2={labelAnchorPoint.x}
+                                y2={labelAnchorPoint.y}
+                                stroke={hovered.color}
+                                strokeWidth="1.5"
+                            />
 
-                            {/* Value label */}
+                            {/* Circle at label end */}
+                            <circle cx={labelAnchorPoint.x} cy={labelAnchorPoint.y} r={2} fill={hovered.color} />
+
+                            {/* Value text */}
                             <text
-                                x={linePoint.x + textOffsetX}
-                                y={linePoint.y}
+                                x={labelAnchorPoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -40 : 10)}
+                                y={labelAnchorPoint.y}
                                 fontSize="13"
                                 fontWeight="bold"
                                 fill={hovered.color}
+                                textAnchor={midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? "end" : "start"}
                             >
                                 {hovered.value}%
                             </text>
                         </>
+
                     );
                 })()}
 

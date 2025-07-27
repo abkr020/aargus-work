@@ -9,77 +9,195 @@ type PieData = {
 type Props = {
     data: PieData[];
     radius?: number;
+    innerRadius?: number; // <-- NEW
 };
 
 const getArcPath = (
     cx: number,
     cy: number,
-    radius: number,
+    outerR: number,
+    innerR: number,
     startAngle: number,
     endAngle: number
 ): string => {
-    const start = {
-        x: cx + radius * Math.cos(startAngle),
-        y: cy + radius * Math.sin(startAngle),
-    };
-
-    const end = {
-        x: cx + radius * Math.cos(endAngle),
-        y: cy + radius * Math.sin(endAngle),
-    };
+    const polarToCartesian = (r: number, angle: number) => ({
+        x: cx + r * Math.cos(angle),
+        y: cy + r * Math.sin(angle),
+    });
 
     const largeArcFlag = endAngle - startAngle > Math.PI ? 1 : 0;
-    const path = [
-        `M ${cx} ${cy}`,
-        `L ${start.x} ${start.y}`,
-        `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`,
-        "Z",
+
+    const outerStart = polarToCartesian(outerR, startAngle);
+    const outerEnd = polarToCartesian(outerR, endAngle);
+    const innerEnd = polarToCartesian(innerR, endAngle);
+    const innerStart = polarToCartesian(innerR, startAngle);
+
+    return [
+        `M ${outerStart.x} ${outerStart.y}`,
+        `A ${outerR} ${outerR} 0 ${largeArcFlag} 1 ${outerEnd.x} ${outerEnd.y}`,
+        `L ${innerEnd.x} ${innerEnd.y}`,
+        `A ${innerR} ${innerR} 0 ${largeArcFlag} 0 ${innerStart.x} ${innerStart.y}`,
+        `Z`,
     ].join(" ");
-    return path;
 };
 
-const PieChart: React.FC<Props> = ({ data, radius = 100 }) => {
-    const cx = radius + 5;
-    const cy = radius + 5;
+const getMidAngle = (start: number, end: number) => (start + end) / 2;
+
+const polarToCartesian = (cx: number, cy: number, r: number, angleRad: number) => ({
+    x: cx + r * Math.cos(angleRad),
+    y: cy + r * Math.sin(angleRad),
+});
+
+const getArcSegmentPath = (
+    cx: number,
+    cy: number,
+    radius: number,
+    angleStartRad: number,
+    angleEndRad: number
+): string => {
+    const start = polarToCartesian(cx, cy, radius, angleStartRad);
+    const end = polarToCartesian(cx, cy, radius, angleEndRad);
+    const largeArc = angleEndRad - angleStartRad > Math.PI ? 1 : 0;
+
+    return [
+        `M ${start.x} ${start.y}`,
+        `A ${radius} ${radius} 0 ${largeArc} 1 ${end.x} ${end.y}`,
+    ].join(' ');
+};
+
+
+const PieChart: React.FC<Props> = ({ data, radius = 100, innerRadius = 0 }) => {
+    const cx = radius + 100;
+    const cy = radius + 50;
     let startAngle = 0;
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
     return (
         <div style={{ textAlign: "center", padding: '5px' }}>
-            <svg width={(radius * 2) + 10} height={(radius * 2) + 10}>
+            <svg width={(radius * 2) + 200} height={(radius * 2) + 100} style={{ backgroundColor: 'darkgray' }}>
                 {data.map((slice, index) => {
                     const sliceAngle = (slice.value / 100) * 2 * Math.PI;
                     const endAngle = startAngle + sliceAngle;
 
                     const isHovered = index === hoveredIndex;
-                    const updatedRadious = (isHovered ? radius + 3 : radius)
-                    const path = getArcPath(cx, cy, updatedRadious, startAngle, endAngle);
+                    const updatedRadious = (isHovered ? radius + 5 : radius)
+                    const updatedInnerRadious = (isHovered ? innerRadius - 5 : innerRadius)
+                    const path = getArcPath(cx, cy, updatedRadious, updatedInnerRadious, startAngle, endAngle);
+                    console.log('path====', path);
 
                     console.log("aaaa", isHovered);
 
+
                     const pathElement = (
-                        <path
-                            key={index}
-                            d={path}
-                            fill={slice.color}
-                            stroke="#fff"
-                            strokeWidth={isHovered ? 1 : 0.5}
-                            opacity={hoveredIndex === null || isHovered ? 1 : 0.5}
-                            onMouseEnter={(e) => {
-                                setTooltipPos({ x: e.clientX, y: e.clientY })
-                                setHoveredIndex(index)
-                            }}
-                            onMouseLeave={() => {
-                                setHoveredIndex(null)
-                                setTooltipPos(null);
-                            }}
-                        />
+                        <>
+
+                            <path
+                                key={index}
+                                d={path}
+                                fill={slice.color}
+                                stroke={isHovered ? slice.color : '#fff'}
+                                strokeWidth={1}
+                                opacity={hoveredIndex === null || isHovered ? 1 : 0.5}
+                                onMouseEnter={(e) => {
+                                    setTooltipPos({ x: e.clientX, y: e.clientY })
+                                    setHoveredIndex(index)
+                                }}
+                                onMouseLeave={() => {
+                                    setHoveredIndex(null)
+                                    setTooltipPos(null);
+                                }}
+                            />
+                            {
+                                hoveredIndex !== null && (
+                                    <text
+                                        x={cx}
+                                        y={cy}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                        fontSize="16"
+                                        fontWeight="bold"
+                                        fill={data[hoveredIndex].color}
+                                    >
+                                        {data[hoveredIndex].label}
+                                    </text>
+                                )
+                            }
+                        </>
                     );
+                    {/* Center label */ }
 
                     startAngle = endAngle;
                     return pathElement;
                 })}
+                {hoveredIndex !== null && (() => {
+                    const hovered = data[hoveredIndex];
+                    const sliceStartAngle = data
+                        .slice(0, hoveredIndex)
+                        .reduce((acc, cur) => acc + (cur.value / 100) * 2 * Math.PI, 0);
+                    const sliceAngle = (hovered.value / 100) * 2 * Math.PI;
+                    const sliceEndAngle = sliceStartAngle + sliceAngle;
+                    const midAngle = getMidAngle(sliceStartAngle, sliceEndAngle);
+
+                    const r1 = radius + 8; // arc ring
+                    const r2 = r1 + 10;    // line endpoint
+
+                    const arcPoint = polarToCartesian(cx, cy, r1, midAngle);
+                    const linePoint = polarToCartesian(cx, cy, r2, midAngle);
+
+                    const textOffsetX = midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -40 : 10;
+
+                    return (
+                        <>
+                            <path
+                                d={getArcSegmentPath(
+                                    cx,
+                                    cy,
+                                    radius + 8,  // outer highlight radius
+                                    sliceStartAngle,
+                                    // midAngle - 0.1,  // 0.1 rad ≈ 6°
+                                    // midAngle + 0.1
+                                    sliceEndAngle
+                                )}
+                                fill="none"
+                                stroke={hovered.color}
+                                strokeWidth="2"
+                            />
+
+                            {/* <path
+                                // key={}
+                                d={}
+                                fill={}
+                                
+                            /> */}
+                            {/* Line pointing out */}
+                            <line
+                                x1={arcPoint.x}
+                                y1={arcPoint.y}
+                                x2={linePoint.x}
+                                y2={linePoint.y}
+                                stroke={hovered.color}
+                                strokeWidth="1.5"
+                            />
+                            
+
+                            {/* Optional arc marker */}
+                            <circle cx={linePoint.x} cy={linePoint.y} r={2} fill={hovered.color} />
+
+                            {/* Value label */}
+                            <text
+                                x={linePoint.x + textOffsetX}
+                                y={linePoint.y}
+                                fontSize="13"
+                                fontWeight="bold"
+                                fill={hovered.color}
+                            >
+                                {hovered.value}%
+                            </text>
+                        </>
+                    );
+                })()}
+
             </svg>
             {hoveredIndex !== null && tooltipPos && (
                 <div

@@ -17,18 +17,18 @@ function App() {
 
   ];
     const chartData = [
-    { label: "a", value: 25, color: "#36a2eb" },
-    { label: "b", value: 75, color: "#cc65fe" },
-    // { label: "c", value: 40, color: "#ff6384" },
-    // { label: "D", value: 10, color: "#ffce56" },
-    // { label: "e", value: 20, color: "#ffce56" },
+      // { label: "b", value: 75, color: "#cc65fe" },
+      { label: "c", value: 40, color: "#ff6384" },
+      { label: "D", value: 10, color: "#ffce56" },
+      { label: "e", value: 25, color: "#ffae26" },
+      { label: "agerf", value: 25, color: "#36a2eb" },
   ];
   return (
     <div style={{backgroundColor:'gray'}}>
       {/* <Chart data={rawData}/> */}
       <StatusPieChart rawData={rawData}/>
       <hr />
-        <PieChart data={chartData} radius={100} />
+        <PieChart data={chartData} radius={100}  innerRadius={60}/>
 
     </div>
   )

@@ -140,14 +140,14 @@ const PieChart: React.FC<Props> = ({ data, radius = 100, innerRadius = 0 }) => {
                     const midAngle = getMidAngle(sliceStartAngle, sliceEndAngle);
 
                     const r1 = radius + 8; // arc ring
-                    const r2 = r1 + 10;    // line endpoint
+                    const r2 = r1 + 20;    // line endpoint
 
                     const arcPoint = polarToCartesian(cx, cy, r1, midAngle);
                     const linePoint = polarToCartesian(cx, cy, r2, midAngle);
 
                     const textOffsetX = midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -40 : 10;
                     const labelAnchorPoint = {
-                        x: linePoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -30 : 30),
+                        x: linePoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -20 : 20),
                         y: linePoint.y,
                     };
 
@@ -187,8 +187,8 @@ const PieChart: React.FC<Props> = ({ data, radius = 100, innerRadius = 0 }) => {
 
                             {/* Value text */}
                             <text
-                                x={labelAnchorPoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -40 : 10)}
-                                y={labelAnchorPoint.y}
+                                x={labelAnchorPoint.x + (midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2 ? -10 : 10)}
+                                y={labelAnchorPoint.y + 5}
                                 fontSize="13"
                                 fontWeight="bold"
                                 fill={hovered.color}

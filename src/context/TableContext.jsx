@@ -7,8 +7,8 @@ const defaultTable = {
     name: 'My Table',
     headers: [
       [
-        // { val: 'id' },
-        { val: 'id', rowSpan: 2 },
+        { val: 'id' },
+        // { val: 'id', rowSpan: 2 },
         // { val: 'name', colSpan: 2 },
         // { val: 'age', rowSpan: 2 },
       ],

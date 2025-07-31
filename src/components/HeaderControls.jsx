@@ -104,6 +104,7 @@ const HeaderControls = () => {
             RowSpan:{' '}
             <input
               type="number"
+              min={1}
               value={newRowSpan}
               onChange={(e) => setNewRowSpan(e.target.value)}
               style={{ width: '60px', marginRight: '1rem' }}
@@ -113,6 +114,7 @@ const HeaderControls = () => {
             ColSpan:{' '}
             <input
               type="number"
+              min={1}
               value={newColSpan}
               onChange={(e) => setNewColSpan(e.target.value)}
               style={{ width: '60px', marginRight: '1rem' }}

@@ -23,7 +23,7 @@ const TableContext = createContext();
 export const TableProvider = ({ children }) => {
 
   const [table, setTable] = useState(() => {
-    const stored = localStorage.getItem('t3');
+    const stored = localStorage.getItem('');
     return stored ? JSON.parse(stored) : defaultTable;
   });
   const [activeRow, setActiveRow] = useState(null);
@@ -31,7 +31,7 @@ export const TableProvider = ({ children }) => {
 
 
   useEffect(() => {
-    localStorage.setItem('t3', JSON.stringify(table));
+    localStorage.setItem('', JSON.stringify(table));
   }, [table]);
 
 

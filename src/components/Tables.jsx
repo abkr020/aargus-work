@@ -27,15 +27,15 @@ const Tables = () => {
     <div style={{ padding: '1rem' }}>
       <h3>{table.name}</h3>
 
-      <table border="1" cellPadding="8" cellSpacing="0">
+      <table border="1" cellPadding="8" cellSpacing="0" style={{tableLayout:'fixed', }}>
         <thead>
           {table.headers.map((row, rowIndex) => (
             <tr key={`header-row-${rowIndex}`}>
               {row.map((cell, cellIndex) => (
                 <th
                   key={`cell-${rowIndex}-${cellIndex}`}
-                  rowSpan={cell.rowSpan}
-                  colSpan={cell.colSpan}
+                  rowSpan={cell?.rowSpan}
+                  colSpan={cell?.colSpan}
                   onClick={() => handleCellClick(rowIndex, cellIndex)}
                   style={{
                     backgroundColor:
@@ -43,11 +43,11 @@ const Tables = () => {
                         ? '#ffe599'
                         : undefined,
                     cursor: 'pointer',
-                    width:'100px',
-                    height:'100px'
+                    width:`${(cell?.colSpan)*100}px`,
+                    height:`${(cell?.rowSpan)*100}px`
                   }}
                 >
-                  {cell.val}
+                  {cell?.val}
                 </th>
               ))}
             </tr>

@@ -29,9 +29,10 @@ export const TableProvider = ({ children }) => {
   const [activeRow, setActiveRow] = useState(null);
   const [activeCol, setActiveCol] = useState(null);
 
+console.log("```table",table);
 
   useEffect(() => {
-    localStorage.setItem('', JSON.stringify(table));
+    localStorage.setItem('t1', JSON.stringify(table));
   }, [table]);
 
 
